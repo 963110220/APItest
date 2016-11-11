@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>周公解梦</title>
+		<script src="zepto/zepto.js"></script>
+		<script>
+			document.addEventListener("DOMContentLoaded",function(){
+				var meng = document.querySelectorAll("input")[0];
+				var btn = meng.nextSibling;
+				var Box = document.querySelector("#content");
+				btn.onclick=function(){
+					var val = meng.value;
+					$.ajax({
+						url:" http://apis.baidu.com/txapi/dream/dream",
+						async:true,
+						headers:{
+							apikey:'bfa91e993c34940be862874bca50f785'
+						},
+						data:{
+							word:val
+						},
+						success:function(res){
+							if(res.msg==='success'){
+								$.each(res.newslist, function(idx,item){
+									Box.innerHTML="<strong>"+val+"</strong>:"+item.result;
+								});
+							}else{
+								Box.innerHTML="找不到关键词";
+							}
+						}
+					});
+				}
+			})
+		</script>
+	</head>
+	<body>
+		梦儿：<input type="text" placeholder="梦境是什么"/><button>解开梦境</button>
+		<p id="content"></p>
+	</body>
+</html>

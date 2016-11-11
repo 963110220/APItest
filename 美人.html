@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>新闻</title>
+		<script type="text/javascript" src="zepto/zepto.js" ></script>
+		<script>
+			document.addEventListener("DOMContentLoaded",function(){
+				$.ajax({
+					url:" http://apis.baidu.com/txapi/mvtp/meinv",
+					headers:{
+						apikey:"bfa91e993c34940be862874bca50f785"
+					},
+					data:{
+						num:"10"
+					},
+					success:function(res){
+						console.log(res)
+					 	$.each(res.newslist, function(idx,item) {
+					 		var img = document.createElement("img");
+					 		img.setAttribute("src",item.picUrl);
+					 		document.body.appendChild(img);
+					 	});
+					}
+				});		 
+			})
+		</script>
+	</head>
+	<body>
+	</body>
+</html>
