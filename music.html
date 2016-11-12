@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1" />
+		<title>music player</title>
+		<link rel="stylesheet" href="font/iconfont.css" />
+		<link rel="stylesheet" href="css/swiper.min.css"/>
+		<script type="text/javascript" src="js/swiper.min.js" ></script>
+		<script type="text/javascript" src="zepto/zepto.js" ></script>
+		<script type="text/javascript" src="zepto/touch.js" ></script>
+		<script type="text/javascript" src="js/music.js" ></script>
+		<style>
+			body,html{padding: 0;margin: 0;background-color: #EEEEEE; font-family: "微软雅黑";}
+			header{background-color: green;padding: 15px 0;text-align: center;}
+			header span{color:#fff;display: inline-block;margin-right: 20px;}
+			#search{float: right;}
+			#my{float: left;margin-left: 20px;}
+			.blod{font-weight: bolder;}
+			section{background-color: #fff;margin-top:1rem;}
+			#myhabit div{display: flex;}
+			#myhabit ul{padding:0;list-style: none;display: flex;flex: 1;flex-direction: column;align-items: center;}
+			#myhabit  ul li{margin-top: 10px;}
+			.mylist{display: flex;margin-top: 1rem;background-color: #fff;}
+			.mylist ul{list-style: none;display: flex;width: 100%;height: 100%;padding: 0;margin: 0;}
+			.mylist ul li{display: flex;width: 94%;padding: 1rem 3%;}
+			.mylistheard{justify-content: center;border-bottom: 1px solid grey;font-weight: bold;}
+			ul .iconfont{font-size: 2rem;}
+			footer{position: fixed;height: 4rem;width:100%;background-color: #fff;bottom: 0;}
+			.play{display: flex;width: 100%;height: 100%;}
+			.play img{height: 4rem;width:4rem;display: flex;}
+			.play-staus{display: flex;flex: 1;width: 100%;padding: 0 3%;}
+			.process{display: block;width: 100%;height: 0.5rem;background: url(img/icon_进度-01.png) no-repeat center center;}
+			.song{position: absolute;top: 1rem;height: 3rem;}
+			.songname{height: 1rem;display: block;font-size: 14px;}
+			.singer{height: 1rem;display: block;font-size: 10px;color: gray;margin-top: 5px;}
+			.playmain{height: 3rem;position: absolute;top: 1rem;right: 3%;display: flex;align-items: center;}
+			.playmain span{font-size: 2rem;padding-left: 1rem;}
+			#model{margin-bottom: 5px;}
+			.searchsong{display: flex;width: 80%;height: 1.5rem;margin: 5px auto;}
+			.searchsong input{display: flex;flex: 5;border: 1px solid grey;}
+			.searchsong span{display: flex;flex: 1;padding-left: 4px;}
+			.songlist{list-style: none;display: flex;margin-top: 10px;padding: 5px 0;border-top: 1px solid gainsboro;}
+			.songlist li{display: flex;width: 100%;padding: 3%;border-bottom: 1px solid gainsboro;}
+			.songlist .sole{display: flex;flex-direction: column;flex: 5;}
+			.songlist #add{flex: 1;align-items: center;}
+			.songlist li span{display: flex;flex: 1;}
+		</style>
+	</head>
+	<body>
+		 <header><span id="my" class="iconfont icon-my2line"></span><span>我的</span><span>音乐馆</span><span>乐库</span><span id="search" class="iconfont icon-search"></span></header>
+		<section class="swiper-container">
+			<div class="swiper-wrapper">
+				<div class="swiper-slide" id="myhabit">
+					<div>						
+					<ul>
+						<li class="iconfont icon-like"></li>
+						<li>我喜欢</li>
+					</ul>
+					<ul>
+						<li class="iconfont icon-sing"></li>
+						<li>我爱唱</li>
+					</ul>
+					<ul>
+						<li class="iconfont icon-time"></li>
+						<li>最近播放</li>
+					</ul>
+					</div>
+					<div>						
+					<ul>
+						<li class="iconfont icon-process"></li>
+						<li>我的列表</li>
+					</ul>
+					<ul>
+						<li class="iconfont icon-icon2"></li>
+						<li>我爱看</li>
+					</ul>
+					<ul>
+						<li class="iconfont icon-collect"></li>
+						<li>我爱搜集</li>
+					</ul>
+					</div>
+					<div class="mylist">
+						<ul>
+							<li class="mylistheard">我 的 歌 单</li>
+						</ul>
+					</div>
+				</div>
+				<div class="swiper-slide">音乐馆</div>
+				<div class="swiper-slide">
+					<div class="searchsong">		
+						<input type="text" id="txt"/>
+						<span id="find">搜索</span>
+					</div>
+					<ul class="songlist">
+						<li>
+							<div class="sole"><span>告白气球</span><span>周杰伦和周杰伦床边的故事</span></div>
+							<div id="add" class="iconfont icon-add2"></div>
+						</li>
+					</ul>
+				</div>
+			</div>			
+		</section>
+		
+		
+		<footer>
+			<div class="play">
+				<img src="img/default.jpg" />
+				<div class="play-staus">
+					<progress class="process"></progress>
+					<div class="song">
+						<span class="songname">魔鬼天使</span>
+						<span class="singer">田馥甄</span>
+					</div>
+					<div class="playmain">
+						<span class="iconfont icon-previous" id="btnPrev"></span>
+						<span class="iconfont icon-play" id="btnPlay"></span>
+						<span class="iconfont icon-next" id="btnNext"></span>
+						<span id="model" class="iconfont icon-loop" data-model="1" title="单曲循环"></span>
+					</div>
+				</div>
+				 
+			</div>
+		</footer>
+	</body>
+	<script> 
+ 		var mySwiper = new Swiper('section.swiper-container',{
+			direction : 'horizontal',
+		})
+	</script>
+</html>
