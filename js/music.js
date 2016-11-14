@@ -1,20 +1,19 @@
 document.addEventListener("DOMContentLoaded",function(){
 	var player = new Audio();
 	var $btnPlay = $("#btnPlay");
-	var $span = document.querySelectorAll("header span");
 	var $swp = document.querySelector("section .swiper-wrapper");
 	var width = $(window).width();
-	$span[1].addEventListener("tap",function(){
+	$("header span").eq(1).on("tap",function(){
 		$(this).siblings().removeClass("blod");
 		$(this).addClass("blod");
 		$swp.style = "transition-duration: 0ms; transform: translate3d(0px, 0px, 0px);transition:transform 300ms"; 
 	});
-	$span[2].addEventListener("tap",function(){
+	$("header span").eq(2).on("tap",function(){
 		$(this).siblings().removeClass("blod");
 		 $(this).addClass("blod");
 		$swp.style = "transition-duration: 0ms; transform: translate3d(-"+width+"px, 0px, 0px);transition:transform 300ms";
 	});
-	$span[3].addEventListener("tap",function(){
+	$("header span").eq(3).on("tap",function(){
 		$(this).siblings().removeClass("blod");
 		$(this).addClass("blod");
 		$swp.style = "transition-duration: 0ms; transform: translate3d(-"+2*width+"px, 0px, 0px);transition:transform 300ms";
@@ -62,7 +61,7 @@ document.addEventListener("DOMContentLoaded",function(){
 	 var $songname = $(".songname");
 	 var $singer = $(".singer");
 	 var $singimg = $("#singimg");
-	 $("section").on("tap",".sole",function(){
+	 $(".songlist").on("tap",".sole",function(){
 	 	var id =  $(this).attr("id");
 	 	$.ajax({
 	 		type:"get",
@@ -81,13 +80,10 @@ document.addEventListener("DOMContentLoaded",function(){
 	 			$songname.html(res.data.songName);
 	 			$singer.html(res.data.singerName);
 	 		}
-	 	}); 
-	 	if(player.play()){
-		 	$btnPlay.removeClass("icon-play").addClass("icon-pause");
-		 	
-		 }else{
-		 	$btnPlay.removeClass("icon-pause").addClass("icon-play");
-		 }
+	 	});
+	 	$("#minelist li").eq(index).removeClass("active");
+ 		$(this).closest("li").siblings().find(".sole").removeClass("active");
+		$(this).addClass("active");
 	 });
 	 $btnPlay.on("tap",function(){
 	 	if(player.paused){
@@ -101,23 +97,168 @@ document.addEventListener("DOMContentLoaded",function(){
 	 })
 	
 	 player.onplay=function(){
+	 	$btnPlay.removeClass("icon-play").addClass("icon-pause");
 	 	$singimg.addClass('playing');
 	 	$singimg.css("animationPlayState","running");
+	 	console.log(index);
+	 	$("#minelist li").eq(index).siblings().removeClass("active");
+	 	$("#minelist li").eq(index).addClass("active");
 	 }
+ 
 	 player.onpause = function(){
 		// 移除图片旋转效果
 		$singimg.css("animationPlayState","paused");
+		$btnPlay.removeClass("icon-pause").addClass("icon-play");
 	}
 	var $minelist = $("#minelist");
+	var datalist = localStorage.getItem('datalist');
+	datalist = datalist ?JSON.parse(datalist):[];
+	console.log(datalist);
 	$("section").on("tap","#add",function(){
-		var $li = $("<li/>");
-		$(this).siblings().clone().appendTo($li);
-		var $div = $("<div/>");
-		$div.attr("id","del").addClass("iconfont icon-failed").appendTo($li);
-		$li.appendTo($minelist);
+		var id = $(this).siblings().attr("id");
+		$.ajax({
+	 		type:"get",
+	 		url:" http://apis.baidu.com/geekery/music/playinfo",
+	 		headers:{
+	 			apikey:'bfa91e993c34940be862874bca50f785'
+	 		},
+	 		data:{
+	 			hash:id
+	 		},
+	 		success:function(res){
+	 			var res = JSON.parse(res);
+	 			console.log(res);
+	 			console.log(res.data.url);
+	 			var songlist = {"id":id,"songurl":res.data.url,"singerName":res.data.singerName,"songName":res.data.songName,"songtime":res.data.timeLength};
+				datalist.push(songlist);
+				localStorage.setItem('datalist',JSON.stringify(datalist)); 
+			 	var songmsg = localStorage.getItem('datalist');
+			 	songmsg = JSON.parse(songmsg);
+			 	console.log(songmsg);
+			 	$minelist.empty();
+			 	songmsg.forEach(function(item,idx){
+				var $li = $("<li/>");
+				$li.attr("data-idx",idx);
+				var $div = $("<div/>");
+				var $span = $("<span/>");
+				$span.html(item.songName).appendTo($div);
+				var $span = $("<span/>");
+				$span.html(item.singerName).appendTo($div);
+				$div.addClass("sole").attr("id",item.id).appendTo($li);
+				var $div = $("<div/>");
+				$div.attr("id","del").addClass("iconfont icon-failed").appendTo($li);
+				$li.appendTo($minelist);	
+			 	})
+	 		}
+	 	});
 	});
 	
 	
 	
+	var playlist = [];
+	var index = 0;
+	var modle = 0;
+	playlist = datalist;
+	datalist.forEach(function(item,idx){
+				var $li = $("<li/>");
+				$li.attr("data-idx",idx);
+				var $div = $("<div/>");
+				var $span = $("<span/>");
+				$span.html(item.songName).appendTo($div);
+				var $span = $("<span/>");
+				$span.html(item.singerName).appendTo($div);
+				$div.addClass("sole").attr("id",item.id).appendTo($li);
+				var $div = $("<div/>");
+				$div.attr("id","del").addClass("iconfont icon-failed").appendTo($li);
+				$li.appendTo($minelist);
+				
+	})
 	
+	if(playlist[index]){
+		player.src = playlist[index].songurl;
+		$(".songname").html(playlist[index].songName);
+		$(".singer").html(playlist[index].singerName);
+		console.log(playlist.length);
+	 }
+	function play(){
+			if(index<0){
+				index = playlist.length-1;
+			}else if(index > playlist.length-1){
+				index = 0;
+			}
+			player.src = playlist[index].songurl;
+			$(".songname").html(playlist[index].songName);
+		    $(".singer").html(playlist[index].singerName);
+			player.play();
+		}
+	$("#btnPrev").on("tap",function(){
+		index--;
+		play();
+	});
+	
+	$("#btnNext").on("tap",function(){
+		index++;
+		console.log(index);
+		play();
+	});
+	
+	$("#minelist").on("tap",".sole",function(){
+		index = $(this).parent().attr('data-idx');
+		play();
+	});
+	
+	var idxm = 0;
+	var modlelist = ['iconfont icon-loop','iconfont icon-list','iconfont icon-list-loop','iconfont icon-random'];
+	$("#model").on("tap",function(){
+		idxm++;
+		idxm = idxm%4;
+		modle = idxm;
+		$(this).attr({"id":"model","class":modlelist[idxm],"data-model":idxm+1});
+	});
+	$(".process").on("change",function(){
+		var processval = $(this).val();
+		player.currentTime = player.duration*processval/100;
+	});
+	
+	player.ontimeupdate = function(){
+		updateTime();
+	}
+	
+	player.onended = function(){
+		var modelval = parseInt($("#model").attr("data-model"));
+		switch(modelval){
+			case 1:
+				play();
+				break;
+			case 2:
+				if(index<playlist.length-1){
+					index++;
+					play();
+				}
+				break;
+			case 3:
+				index++;
+				play();
+				break;
+			case 4:
+				index = Math.round(Math.random()*playlist.length);
+				play();
+				break;
+		}
+	}
+	
+	// 歌曲能播放时
+//	player.oncanplay = function(){
+//		init();
+//	}
+	
+//	function init(){
+//		updateTime();
+//	}
+	
+	function updateTime(){
+		$(".process").val(player.currentTime/player.duration*100);
+	}
+	
+
 })
