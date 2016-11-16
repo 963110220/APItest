@@ -2,7 +2,8 @@ document.addEventListener("DOMContentLoaded",function(){
 	var player = new Audio();
 	var $btnPlay = $("#btnPlay");
 	var $swp = document.querySelector("section .swiper-wrapper");
-	var width = $(window).width();
+	var width = $("body").width();
+	console.log(width);
 	$("header span").eq(1).on("tap",function(){
 		$(this).siblings().removeClass("blod");
 		$(this).addClass("blod");
@@ -248,13 +249,13 @@ document.addEventListener("DOMContentLoaded",function(){
 	}
 	
 	// 歌曲能播放时
-//	player.oncanplay = function(){
-//		init();
-//	}
+	player.oncanplay = function(){
+		init();
+	}
 	
-//	function init(){
-//		updateTime();
-//	}
+	function init(){
+		updateTime();
+	}
 	
 	function updateTime(){
 		$(".process").val(player.currentTime/player.duration*100);
